@@ -1,3 +1,5 @@
+Forked to fix bug where views (by_email, etc) were not being called on the correct class.
+
 = ORM Adapter
 
 Provides a single point of entry for popular ruby ORMs.  Its target audience is gem authors who want to support more than one ORM.

@@ -29,18 +29,22 @@ module CouchRest
 
         # Get an instance by id of the model
         def get!(id)
-          klass.find(wrap_key(id))
+          klass.find(wrap_key(id)) || raise("object with id (#{id}) not found")
         end
 
         # Get an instance by id of the model
-        alias :get :get!
+        def get(id)
+          klass.find(wrap_key(id))
+        end
+
 
         # Find the first instance matching conditions
         def find_first(conditions)
+          puts '-'*30, "in find_first #{klass.inspect} :: #{klass.respond_to?(:by_owner)} :;#{conditions.inspect}"
           if conditions.keys.first == :id
             get(conditions.values.first)
           else
-            send("by_#{conditions.keys.first}", {:key => conditions.values.first, :limit => 1})
+            klass.send("by_#{conditions.keys.first}", {:key => conditions.values.first, :limit => 1}).first
           end
         end
         
@@ -49,13 +53,17 @@ module CouchRest
           if conditions.keys.first == :id
             get(conditions.values.first)
           else
-            send("by_#{conditions.keys.first}", {:key => conditions.values.first})
+            klass.send("by_#{conditions.keys.first}", {:key => conditions.values.first})
           end
         end
 
         # Create a model with given attributes
         def create!(attributes)
-          klass.create!(attributes)
+          puts '-'*40, "klass is #{klass.inspect} :: attributes are #{attributes.inspect}"
+          obj = klass.create!(attributes)
+          puts '-'*5,"obj is #{klass.inspect} :: #{obj.inspect}", '-'*40
+          obj
+          # klass.create!(attributes)
         end
   
         protected

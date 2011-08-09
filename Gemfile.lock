@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/couchrest/couchrest_model.git
+  revision: 80e5ed27679a497df32917b79285ee5e0159e098
+  specs:
+    couchrest_model (1.1.2)
+      activemodel (~> 3.0)
+      couchrest (~> 1.1.2)
+      mime-types (~> 1.15)
+      tzinfo (~> 0.3.22)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -15,15 +25,10 @@ GEM
     arel (2.0.7)
     bson (1.1.5)
     builder (2.1.2)
-    couchrest (1.0.1)
-      json (>= 1.4.6)
-      mime-types (>= 1.15)
-      rest-client (>= 1.5.1)
-    couchrest_model (1.0.0.beta7)
-      activemodel (>= 3.0.0.beta4)
-      activesupport (>= 2.3.5)
-      couchrest (>= 1.0.0.beta)
-      mime-types (>= 1.15)
+    couchrest (1.1.2)
+      mime-types (~> 1.15)
+      multi_json (~> 1.0.0)
+      rest-client (~> 1.6.1)
     data_objects (0.10.2)
       addressable (~> 2.1)
     datamapper (1.0.2)
@@ -83,7 +88,6 @@ GEM
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
-    json (1.4.6)
     json_pure (1.4.6)
     leshill-will_paginate (2.3.11)
     mime-types (1.16)
@@ -94,8 +98,9 @@ GEM
       durran-validatable (>= 2.0.1)
       leshill-will_paginate (>= 2.3.11)
       mongo (>= 0.18.2)
+    multi_json (1.0.3)
     rake (0.8.7)
-    rest-client (1.6.1)
+    rest-client (1.6.3)
       mime-types (>= 1.16)
     rspec (2.4.0)
       rspec-core (~> 2.4.0)
@@ -118,7 +123,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
-  couchrest_model
+  couchrest_model!
   datamapper
   dm-active_model
   dm-sqlite-adapter

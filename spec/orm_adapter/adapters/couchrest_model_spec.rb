@@ -1,32 +1,58 @@
 require 'spec_helper'
 require 'orm_adapter/example_app_shared'
 
-if !defined?(CouchrestModel) || !(CouchRest.database!("http://admin:admin@127.0.0.1:5984/orm_adapter_spec") rescue nil)
-  puts "** require 'couchrest_model' start CouchDB to run the specs in #{__FILE__}"
+$couch_url = "http://127.0.0.1:5984/orm_adapter_spec" # for when the couch db doesn't have a password on it
+# $couch_url = "http://admin:admin@127.0.0.1:5984/orm_adapter_spec"
+
+if !defined?(CouchRest::Model)
+  puts "** require 'couchrest_model' to run the specs in #{__FILE__}"
+elsif !(CouchRest.database!($couch_url) rescue nil)
+  puts "** start CouchDB to run the specs in #{__FILE__}"
 else  
   
   module CouchrestModelOrmSpec
+
     class User < CouchRest::Model::Base
-      use_database CouchRest.database!("http://admin:admin@127.0.0.1:5984/orm_adapter_spec")
-      
+      use_database CouchRest.database!($couch_url)
+
       property :name
-      #collection_of :notes, CouchrestModelOrmSpec::Note
+      view_by :name
+      collection_of :notes#, :class_name => 'Note'
+      # collection_of :notes, CouchrestModelOrmSpec::Note
     end
 
     class Note < CouchRest::Model::Base
-      use_database CouchRest.database!("http://admin:admin@127.0.0.1:5984/orm_adapter_spec")
+      use_database CouchRest.database!($couch_url)
 
       property :body, :default => "made by orm"
-      #belongs_to :user, CouchrestModelOrmSpec::User
+      belongs_to :user, CouchrestModelOrmSpec::User
+      # belongs_to :owner, class_name: 'User'
+      view_by :owner_id
+      def self.by_owner(options)
+        options = options.dup
+        options[:key] = options[:key].id
+        puts "the args are #{options.inspect}"
+        self.by_owner_id(options) 
+        # self.by_owner_id(:key => user.id) 
+      end
+      # , :map => "
+        # function(doc) {
+          # if ((doc['type'] == 'CouchrestModelOrmSpec::Note') && (doc['owner'] != null)) {
+            # emit(doc['owner'], null);
+          # }
+        # }
+      # "
+      # belongs_to :owner, CouchrestModelOrmSpec::User
+      # def self.by_owner(keys); Note.find(user[:key].id) end
     end
-    
+
     # here be the specs!
     describe CouchRest::Model::Base::OrmAdapter do
       before do
         User.delete_all
         Note.delete_all
       end
-      
+
       describe "the OrmAdapter class" do
         subject { CouchRest::Model::Base::OrmAdapter }
 
@@ -34,7 +60,7 @@ else
           (subject.model_classes & [User, Note]).to_set.should == [User, Note].to_set
         end
       end
-    
+
       it_should_behave_like "example app with orm_adapter" do
         let(:user_class) { User }
         let(:note_class) { Note }

@@ -4,7 +4,7 @@ gem "yard"
 
 group :test do
   gem "activerecord"
-  gem "couchrest_model"
+  gem "couchrest_model", git: "https://github.com/couchrest/couchrest_model.git"
   gem "mongoid"
   gem "rspec"
   gem "jeweler"

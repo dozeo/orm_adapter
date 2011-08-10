@@ -40,14 +40,13 @@ module CouchRest
 
         # Find the first instance matching conditions
         def find_first(conditions)
-          puts '-'*30, "in find_first #{klass.inspect} :: #{klass.respond_to?(:by_owner)} :;#{conditions.inspect}"
           if conditions.keys.first == :id
             get(conditions.values.first)
           else
             klass.send("by_#{conditions.keys.first}", {:key => conditions.values.first, :limit => 1}).first
           end
         end
-        
+
         # Find all models matching conditions
         def find_all(conditions)
           if conditions.keys.first == :id
@@ -59,13 +58,9 @@ module CouchRest
 
         # Create a model with given attributes
         def create!(attributes)
-          puts '-'*40, "klass is #{klass.inspect} :: attributes are #{attributes.inspect}"
-          obj = klass.create!(attributes)
-          puts '-'*5,"obj is #{klass.inspect} :: #{obj.inspect}", '-'*40
-          obj
-          # klass.create!(attributes)
+          klass.create!(attributes)
         end
-  
+
         protected
 
         # converts and documents to ids

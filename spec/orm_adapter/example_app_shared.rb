@@ -21,13 +21,7 @@
 shared_examples_for "example app with orm_adapter" do
   
   def create_model(klass, attrs = {})
-    puts '-'*40, "create_model"
-    puts klass.inspect, '---',attrs.inspect
-    puts '-'*4
-    obj = klass.create!(attrs)
-    puts "the objsect is #{obj.inspect}"
-    puts '-'*40
-    obj
+    klass.create!(attrs)
   end
   
   def reload_model(model)
@@ -85,7 +79,7 @@ shared_examples_for "example app with orm_adapter" do
         user_adapter.get("non-existent id").should be_nil
       end
     end
-  
+
     describe "#find_first(conditions)" do
       it "should return first model matching conditions, if it exists" do
         user = create_model(user_class, :name => "Fred")
@@ -95,31 +89,26 @@ shared_examples_for "example app with orm_adapter" do
       it "should return nil if no conditions match" do
         user_adapter.find_first(:name => "Betty").should == nil
       end
-      
+
       it "when conditions contain associated object, should return first model if it exists" do
-        puts "1  hhhhhhhhhhhhhhhhheeeeeeeeeeeeeeeerrrrrrrrrrrreeeeeeee"
         user = create_model(user_class)
-        puts "2  hhhhhhhhhhhhhhhhheeeeeeeeeeeeeeeerrrrrrrrrrrreeeeeeee"
         note = create_model(note_class, :owner => user)
-        puts "3  hhhhhhhhhhhhhhhhheeeeeeeeeeeeeeeerrrrrrrrrrrreeeeeeee"
         note_adapter.find_first(:owner => user).should == note
-        puts "4  hhhhhhhhhhhhhhhhheeeeeeeeeeeeeeeerrrrrrrrrrrreeeeeeee"
       end
     end
-    
+
     describe "#find_all(conditions)" do
       it "should return only models matching conditions" do
         user1 = create_model(user_class, :name => "Fred")
         user2 = create_model(user_class, :name => "Fred")
         user3 = create_model(user_class, :name => "Betty")
-        # user_adapter.find_all(:name => "Fred").should == [user1, user2]
         user_adapter.find_all(:name => "Fred").sort_by{|doc| doc.id}.should == [user1, user2].sort_by{|doc| doc.id}
       end
 
       it "should return empty array if no conditions match" do
         user_adapter.find_all(:name => "Fred").should == []
       end
-      
+
       it "when conditions contain associated object, should return first model if it exists" do
         user1, user2 = create_model(user_class), create_model(user_class)
         note1 = create_model(note_class, :owner => user1)
@@ -135,17 +124,12 @@ shared_examples_for "example app with orm_adapter" do
       end
 
       it "should raise error when create fails" do
-        puts "llllllllllllllllllaaaaaaaaaaaaaaaaaaalllllllllllllllllllllllllaaaaaaaaaaaaaaallllllllllllllllaaaaaa"
         lambda { user_adapter.create!(:user => create_model(note_class)) }.should raise_error
-        puts "llllllllllllllllllaaaaaaaaaaaaaaaaaaalllllllllllllllllllllllllaaaaaaaaaaaaaaallllllllllllllllaaaaaa"
       end
       
       it "when attributes contain an associated object, should create a model with the attributes" do
-        puts "fffffffffffffffffffffffffddddddddddddddddddddddddddddddddddddwwwwwwwwwwwwwwwwwwwww"
         user = create_model(user_class)
-        puts "faaa 2"
         note = note_adapter.create!(:owner => user)
-        puts "faaa 3"
         note.owner.should == user
 
         reload_model(note).should == 'hi' # owner.should == user

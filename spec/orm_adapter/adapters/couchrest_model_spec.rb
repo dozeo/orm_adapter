@@ -26,24 +26,14 @@ else
 
       property :body, :default => "made by orm"
       belongs_to :user, CouchrestModelOrmSpec::User
+      # belongs_to :owner, CouchrestModelOrmSpec::User
       # belongs_to :owner, class_name: 'User'
       view_by :owner_id
       def self.by_owner(options)
         options = options.dup
         options[:key] = options[:key].id
-        puts "the args are #{options.inspect}"
-        self.by_owner_id(options) 
-        # self.by_owner_id(:key => user.id) 
+        self.by_owner_id(options)
       end
-      # , :map => "
-        # function(doc) {
-          # if ((doc['type'] == 'CouchrestModelOrmSpec::Note') && (doc['owner'] != null)) {
-            # emit(doc['owner'], null);
-          # }
-        # }
-      # "
-      # belongs_to :owner, CouchrestModelOrmSpec::User
-      # def self.by_owner(keys); Note.find(user[:key].id) end
     end
 
     # here be the specs!

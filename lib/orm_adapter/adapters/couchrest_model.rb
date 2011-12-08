@@ -40,7 +40,7 @@ module CouchRest
           if conditions.keys.first == :id
             get(conditions.values.first)
           else
-            send("by_#{conditions.keys.first}", {:key => conditions.values.first, :limit => 1})
+            klass.send("by_#{conditions.keys.first}", {:key => conditions.values.first, :limit => 1}).first
           end
         end
         
